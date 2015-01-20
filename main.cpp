@@ -1,17 +1,17 @@
 #include <iostream>
 
 using namespace std;
-#include "uavModule.h"
+#include "vehicleModule.h"
 
 int main()
 {
 
-    UAVModule uav;
-    uav.initialize();
+    vehicleModule vehicle;
+    vehicle.initialize();
 
-    uav.update();
+    vehicle.update();
 
-    uav.uninitialize();
+    vehicle.uninitialize();
 
     cout << "Hello World!" << endl;
     return 0;

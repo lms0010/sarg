@@ -1,5 +1,5 @@
-#ifndef UAVMODULE_H
-#define UAVMODULE_H
+#ifndef vehicleMODULE_H
+#define vehicleMODULE_H
 
 #include "module.h"
 #include <vector>
@@ -14,7 +14,7 @@ class FailSafeModule;
 class ADSBModule;
 class WaypointModule;
 
-class UAVModule: public Module {
+class vehicleModule: public Module {
 private:
     std::vector<Body*>      _bodies;
     std::vector<Waypoint*>  _waypoints;
@@ -27,8 +27,8 @@ private:
 
 public:
 
-                        UAVModule();
-                        ~UAVModule();
+                        vehicleModule();
+                        ~vehicleModule();
 
     virtual bool        initialize();
     virtual bool        uninitialize();
@@ -37,4 +37,4 @@ public:
 
 };
 
-#endif // UAVMODULE_H
+#endif // vehicleMODULE_H

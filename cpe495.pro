@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    uavModule.cpp \
+    vehicleModule.cpp \
     simulatedRadar.cpp \
     realRadar.cpp \
     simulatedGPS.cpp \
@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     simulatedADSB.cpp \
     realADSB.cpp \
     simulatedWaypoints.cpp \
-    realWaypoints.cpp
+    realWaypoints.cpp \
+    vehicleModule.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -22,7 +23,7 @@ qtcAddDeployment()
 HEADERS += \
     module.h \
     types.h \
-    uavModule.h \
+    vehicleModule.h \
     radarModule.h \
     gpsModule.h \
     driveModule.h \
@@ -37,5 +38,6 @@ HEADERS += \
     simulatedADSB.h \
     realADSB.h \
     simulatedWaypoints.h \
-    realWaypoints.h
+    realWaypoints.h \
+    vehicleModule.h
 

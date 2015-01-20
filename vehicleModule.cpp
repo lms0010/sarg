@@ -1,4 +1,4 @@
-#include "uavModule.h"
+#include "vehicleModule.h"
 
 #ifdef SOFTWARE_MODULES
 #   include "simulatedRadar.h"
@@ -14,7 +14,7 @@
 #   include "realADSB.h"
 #endif
 
-UAVModule::UAVModule() {
+vehicleModule::vehicleModule() {
     //Allocate and initialize modules, depending on whether you wish to use software or actual modules
 
 #ifdef SOFTWARE_MODULES
@@ -36,7 +36,7 @@ UAVModule::UAVModule() {
 
 }
 
-UAVModule::~UAVModule() {
+vehicleModule::~vehicleModule() {
     delete _radar;
     delete _gps;
     delete _stop;
@@ -44,7 +44,7 @@ UAVModule::~UAVModule() {
     delete _adsb;
 }
 
-bool UAVModule::initialize() {
+bool vehicleModule::initialize() {
     bool success = true;
 
     success &= _radar->initialize();
@@ -56,7 +56,7 @@ bool UAVModule::initialize() {
     return success;
 }
 
-bool UAVModule::uninitialize() {
+bool vehicleModule::uninitialize() {
     bool success = true;
 
     success &= _radar->uninitialize();
@@ -68,7 +68,7 @@ bool UAVModule::uninitialize() {
     return success;
 }
 
-bool UAVModule::update() {
+bool vehicleModule::update() {
     bool success = true;
 
     success &= _radar->update();
@@ -80,6 +80,6 @@ bool UAVModule::update() {
     return success;
 }
 
-const char* UAVModule::getLastError() {
+const char* vehicleModule::getLastError() {
     return "ALL GOOD! :D";
 }
