@@ -13,7 +13,7 @@ int main()
 
     vehicle.uninitialize();
 
-    cout << "Hello World!" << endl;
+    cout << "Hello World! Main initialize test" << endl;
     return 0;
 }
 

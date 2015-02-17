@@ -4,7 +4,7 @@
 #include "module.h"
 #include <vector>
 
-#define SOFTWARE_MODULES true
+//#define SOFTWARE_MODULES true
 
 class Body;
 class Waypoint;

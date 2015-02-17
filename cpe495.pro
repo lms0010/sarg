@@ -4,7 +4,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    vehicleModule.cpp \
     simulatedRadar.cpp \
     realRadar.cpp \
     simulatedGPS.cpp \

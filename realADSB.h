@@ -1,5 +1,6 @@
 #ifndef REALADSB_H
 #define REALADSB_H
+#include <pthread.h>
 
 #include "adsbModule.h"
 
@@ -21,6 +22,8 @@ public:
     virtual bool    getLongitude(float& lon);
     virtual bool    getTrack(int& track);
     virtual bool    getDeltaTime(int& deltaTime);
+
+    pthread_t       thread;
 
 
 };
