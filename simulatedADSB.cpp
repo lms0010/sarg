@@ -6,11 +6,10 @@ char*   SimulatedADSB::getLastError() { return 0; }
 bool    SimulatedADSB::initialize() { return true; }
 bool    SimulatedADSB::uninitialize() { return true; }
 
-bool    SimulatedADSB::getMessageType(char** messageType) { return true; }
-bool    SimulatedADSB::getTransmissionType(int& transType) { return true; }
+
 bool    SimulatedADSB::getHexIdent(char** hexIdent) { return true; }
 bool    SimulatedADSB::getFlightID(int& flightID) { return true; }
-bool    SimulatedADSB::getAltitude(int& altitude) { return true; }
+bool    SimulatedADSB::getAltitude(float& altitude) { return true; }
 bool    SimulatedADSB::getGroundSpeed(int& groundSpeed) { return true; }
 bool    SimulatedADSB::getLatitude(float& lat) { return true; }
 bool    SimulatedADSB::getLongitude(float& lon) { return true; }
