@@ -6,7 +6,7 @@
 
 class RadarModule: public Module {
 public:
-    virtual bool getNextBody(Body& body) = 0;
+    virtual bool  getNext(ObstacleDistance& obstacleDistance) = 0;
     virtual      ~RadarModule() {}
 
 };

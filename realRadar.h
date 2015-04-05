@@ -11,7 +11,7 @@ class RealRadar: public RadarModule {
     virtual char*   getLastError();
     virtual bool    initialize();
     virtual bool    uninitialize();
-    virtual bool    getNextBody(Body& body);
+    virtual bool    getNext(ObstacleDistance& obstacleDistance);
     pthread_t       thread;
 };
 

@@ -6,7 +6,7 @@
 
 //#define SOFTWARE_MODULES true
 
-class Body;
+class ObstacleDistance;
 class Waypoint;
 class RadarModule;
 class GPSModule;
@@ -16,8 +16,8 @@ class WaypointModule;
 
 class vehicleModule: public Module {
 private:
-    std::vector<Body*>      _bodies;
-    std::vector<Waypoint*>  _waypoints;
+    std::vector<ObstacleDistance*>      _obstacleDistances;
+    std::vector<Waypoint*>              _waypoints;
 
     RadarModule*            _radar;
     GPSModule*              _gps;

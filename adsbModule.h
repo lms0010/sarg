@@ -2,19 +2,21 @@
 #define ADSBMODULE_H
 
 #include "module.h"
+#include <vector>
 
 class ADSBModule: public Module {
 public:
+
     virtual      ~ADSBModule() {}
 
-    virtual bool getHexIdent(char** hexIdent) = 0;
-    virtual bool getFlightID(int& flightID) = 0;
-    virtual bool getAltitude(float& altitude) = 0;
-    virtual bool getGroundSpeed(int& groundSpeed) = 0;
-    virtual bool getLatitude(float& lat) = 0;
-    virtual bool getLongitude(float& lon) = 0;
-    virtual bool getTrack(int& track) = 0;
-    virtual bool getDeltaTime(int& deltaTime) = 0;
+    virtual bool getObjectCount(int& numObjects) = 0;
+    virtual bool getHexIdent(int index, char** hexIdent) = 0;
+    virtual bool getAltitude(int index, float& altitude) = 0;
+    virtual bool getGroundSpeed(int index, float& groundSpeed)  = 0;
+    virtual bool getLatitude(int index, float& latitude) = 0;
+    virtual bool getLongitude(int index, float& longitude) = 0;
+    virtual bool getTrack(int index, float& track) = 0;
+    virtual bool getTimeStamp(int index, int& timeStamp)  = 0;
 
     enum Message
     {
@@ -45,12 +47,17 @@ public:
     struct positionMSG
     {
        char hex_ident[7];
-       float latitude, longitude, altitude;
+       float latitude, longitude, altitude, groundSpeed, track;
        bool inUse;
-       positionMSG(): latitude(0.0f), longitude(0.0f), altitude(0.0f), inUse(false) {
+       positionMSG(): latitude(0.0f), longitude(0.0f), altitude(0.0f), groundSpeed(0.0f), track(0.0f), inUse(false) {
        }
 
-    } positionArray[500];
+    };
+
+protected:
+    std::vector<positionMSG> visibleAircraft;
+
+
 
 
 

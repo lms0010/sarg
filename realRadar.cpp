@@ -14,7 +14,7 @@ RealRadar::~RealRadar()
 bool    RealRadar::update() { return true; }
 char*   RealRadar::getLastError() { return 0; }
 bool    RealRadar::uninitialize() { return true; }
-bool    RealRadar::getNextBody(Body& body) { return true; }
+bool    RealRadar::getNext(ObstacleDistance& obstacle_distance) { return true; }
 
 
 void *PrintHello2(void *threadid)

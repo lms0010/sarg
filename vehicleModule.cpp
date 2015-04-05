@@ -1,4 +1,5 @@
 #include "vehicleModule.h"
+#include <cmath>
 
 #ifdef SOFTWARE_MODULES
 #   include "simulatedRadar.h"
@@ -76,6 +77,59 @@ bool vehicleModule::update() {
     success &= _stop->update();
     success &= _waypoint->update();
     success &= _adsb->update();
+
+    //ENTER COLLISION AVOIDANCE ALGORITHM*****************
+
+    //OBJECT AVOIDANCE BASED ON RADAR HERE
+
+
+
+
+
+    //AIRCRAFT AVOIDANCE SECTION
+    int earthRadiusMiles        = 3959;
+    float degrees_to_radians    = M_PI/180.0;
+    float radians_to_degrees    = 180.0/M_PI;
+
+    float x;
+    float y;
+    int numObjects;
+    float track;
+    float groundSpeed;
+
+    _adsb->getObjectCount(numObjects);
+
+    for(int i; i<numObjects; i++){
+        _adsb->getTrack(i, track);
+        _adsb->getTrack(i, groundSpeed);
+
+        //direction unit vector for aircraft track
+        x=cos(track);
+        y=sin(track);
+
+        //displacement vector (direction vector * magnitude)
+       // x = x * groundSpeed * timeStamp;
+        //y = y * groundSpeed * timeStamp ;
+
+        //convert displacement vector to lat and long
+
+       // lat = (y/earthRadiusMiles)*(radians_to_degrees);
+         //radius of a circle around the earth at given lat
+        // r = earthRadiusMiles*cos(Lat*degrees_to_radians);
+        // lon = (x/r)*radians_to_degrees;
+
+        //add position + displacement vector
+
+
+
+    }
+
+
+
+
+
+
+
 
     return success;
 }

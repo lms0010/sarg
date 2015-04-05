@@ -8,13 +8,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <cstring>
 
-void error(const char *msg)
-{
-    perror(msg);
-    exit(0);
-}
-
+RealADSB::RealADSB(): ADSBModule(), errorFlag(false) {}
 
 RealADSB::~RealADSB()
 {/* Last thing that main() should do */
@@ -25,22 +21,41 @@ bool    RealADSB::update() { return true; }
 char*   RealADSB::getLastError() { return 0; }
 bool    RealADSB::uninitialize() { return true; }
 
+bool RealADSB::getObjectCount(int& numObjects){
+     numObjects=visibleAircraft.size();
+     return true;
+}
 
-bool    RealADSB::getHexIdent(char** hexIdent) { return true; }
-bool    RealADSB::getFlightID(int& flightID) { return true; }
-bool    RealADSB::getAltitude(float& altitude) { return true; }
-bool    RealADSB::getGroundSpeed(int& groundSpeed) { return true; }
-bool    RealADSB::getLatitude(float& lat) { return true; }
-bool    RealADSB::getLongitude(float& lon) { return true; }
-bool    RealADSB::getTrack(int& track) { return true; }
-bool    RealADSB::getDeltaTime(int& deltaTime) { return true; }
+bool    RealADSB::getHexIdent(int index, char** hexIdent) {
+        *hexIdent = visibleAircraft[index].hex_ident;
+        return true;
+}
+bool    RealADSB::getAltitude(int index, float& altitude) {
+        altitude =  visibleAircraft[index].altitude;
+        return true;
+}
+bool    RealADSB::getGroundSpeed(int index, float& groundSpeed) {
+        groundSpeed = visibleAircraft[index].groundSpeed;
+        return true;
+}
+bool    RealADSB::getLatitude(int index, float& latitude) {
+        latitude = visibleAircraft[index].latitude;
+        return true;
+}
+bool    RealADSB::getLongitude(int index, float& longitude) {
+        longitude = visibleAircraft[index].longitude;
+        return true;
+}
+bool    RealADSB::getTrack(int index, float& track) {
+        track = visibleAircraft[index].track;
+        return true;
+}
+bool    RealADSB::getTimeStamp(int index, int& timeStamp)  { return true; }
 
-void *ADSBClientThread(void *threadid)
+void *RealADSB::ADSBClientThread(void *object)
 {
-   long tid;
-   tid = (long)threadid;
-   printf("ADS-B thread #%ld!\n", tid);
-   pthread_exit(NULL);
+ //  pthread_exit(NULL);
+   RealADSB* adsb = (RealADSB*)object;
 
 
 
@@ -49,15 +64,11 @@ void *ADSBClientThread(void *threadid)
    struct hostent *server;
 
    char buffer[256];
-   if (argc < 3) {
-      fprintf(stderr,"usage %s hostname port\n", argv[0]);
-      exit(0);
-   }
-   portno = atoi(argv[2]);
+   portno = atoi(ADSB_PORTNUMBER);
    sockfd = socket(AF_INET, SOCK_STREAM, 0);
    if (sockfd < 0)
-       error("ERROR opening socket");
-   server = gethostbyname(argv[1]);
+        fprintf(stderr,"ERROR opening socket\n");
+   server = gethostbyname(ADSB_HOSTNAME);
    if (server == NULL) {
        fprintf(stderr,"ERROR, no such host\n");
        exit(0);
@@ -69,25 +80,27 @@ void *ADSBClientThread(void *threadid)
         server->h_length);
    serv_addr.sin_port = htons(portno);
    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-       error("ERROR connecting");
+       fprintf(stderr,"ERROR connecting\n");
    printf("Please enter the message: ");
    bzero(buffer,256);
    fgets(buffer,255,stdin);
    n = write(sockfd,buffer,strlen(buffer));
    if (n < 0)
-        error("ERROR writing to socket");
+        fprintf(stderr,"ERROR writing to socket\n");
    bzero(buffer,256);
    n = read(sockfd,buffer,255);
    if (n < 0)
-        error("ERROR reading from socket");
+        fprintf(stderr,"ERROR reading from socket\n");
    printf("%s\n",buffer);
 
 
    char * token;
-   token = strtok (str, ",");
+   token = strtok (buffer, ",");
    int count = 0;
    bool flag = false;
    int currentIndex = -1;
+   int transmission_type;
+   int emptyIndex = -1;
 
 
 
@@ -95,77 +108,87 @@ void *ADSBClientThread(void *threadid)
 
    while(token !=NULL)
    {
-
        switch(count){
 
-       case MSG_TYPE:
+       case ADSBModule::MSG_TYPE:
            if(strcmp(token, "MSG")!= 0)
                flag = true;
             break;
-       case TRANSMISSION_TYPE:
-              if(strcmp(token, "3")!= 0)
-                  flag = true;
+       case ADSBModule::TRANSMISSION_TYPE:
+              if((strcmp(token, "3")!= 0)&&(strcmp(token, "4")!=0)){
+                flag = true;
+              }
+              else if (strcmp(token, "3")==0){
+                  transmission_type = 3;
+              }
+              else if (strcmp(token, "4")==0){
+                  transmission_type = 4;
+              }
             break;
-       case SESSION_ID:
+       case ADSBModule::SESSION_ID:
             break;
-       case AIRCRAFT_ID:
+       case ADSBModule::AIRCRAFT_ID:
            break;
-       case HEX_IDENT:
-           int emptyIndex = -1;
-           for (int i; i<500; i++)
-           {
-               if(strcmp(token, positionArray[i].hex_ident)==0)
-               {
+       case ADSBModule::HEX_IDENT:
+           for (int i=0; i<adsb->visibleAircraft.size(); i++){
+               if(strcmp(token, adsb->visibleAircraft[i].hex_ident)==0){
                    currentIndex = i; //found in array
                }
-               if(!positionArray[i].inUse) emptyIndex = i;
+               if(! adsb->visibleAircraft[i].inUse) emptyIndex = i;
            }
            if(currentIndex == -1) { //wasn't found in the array
-               if(empty != -1) {
-                   inUse=true;
+               if(emptyIndex != -1) {
+                   adsb->visibleAircraft[currentIndex].inUse=true;
                    currentIndex = emptyIndex;
-                   strcpy(positionArray[currentIndex], token); //insert new identifier
+                   strcpy( adsb->visibleAircraft[currentIndex].hex_ident, token); //insert new identifier
                } else {
                    printf("ERROR, OUT OF EMPTY OBJECTS!!!!");
                }
            }
            break;
-       case FLIGHT_ID:
+       case ADSBModule::FLIGHT_ID:
            break;
-       case DATE_GEN:
+       case ADSBModule::DATE_GEN:
            break;
-       case TIME_GEN:
+       case ADSBModule::TIME_GEN:
            break;
-       case DATE_LOG:
+       case ADSBModule::DATE_LOG:
            break;
-       case TIME_LOG:
+       case ADSBModule::TIME_LOG:
            break;
-       case CALLSIGN:
+       case ADSBModule::CALLSIGN:
            break;
-       case ALTITUDE:
-          positionArray[currentIndex].altitude = atoi(token);
+       case ADSBModule::ALTITUDE:
+           if(transmission_type==3)
+                 adsb->visibleAircraft[currentIndex].altitude = atoi(token);
            break;
-       case GROUND_SPEED:
+       case ADSBModule::GROUND_SPEED:
+           if(transmission_type==4)
+                 adsb->visibleAircraft[currentIndex].groundSpeed = atoi(token);
            break;
-       case TRACK:
+       case ADSBModule::TRACK:
+            if(transmission_type==4)
+                  adsb->visibleAircraft[currentIndex].track = atoi(token);
            break;
-       case LATITUDE:
-             positionArray[currentIndex].latitude = atoi(token);
+       case ADSBModule::LATITUDE:
+           if(transmission_type==3)
+              adsb->visibleAircraft[currentIndex].latitude = atoi(token);
            break;
-       case LONGITUDE:
-             positionArray[currentIndex].longitude = atoi(token);
+       case ADSBModule::LONGITUDE:
+           if(transmission_type==3)
+              adsb->visibleAircraft[currentIndex].longitude = atoi(token);
            break;
-       case VERTICAL_RATE:
+       case ADSBModule::VERTICAL_RATE:
            break;
-       case SQUAWK:
+       case ADSBModule::SQUAWK:
            break;
-       case ALERT:
+       case ADSBModule::ALERT:
            break;
-       case EMERGENCY:
+       case ADSBModule::EMERGENCY:
            break;
-       case SPI:
+       case ADSBModule::SPI:
            break;
-       case IS_ON_GROUND:
+       case ADSBModule::IS_ON_GROUND:
            break;
        default:
            break;
@@ -176,13 +199,9 @@ void *ADSBClientThread(void *threadid)
        printf("%s\n",token);
        token=strtok(NULL, ",");
         if(flag) break;
-
    }
 
-
-
-
-   close(sockfd);
+  close(sockfd);
    return 0;
 }
 
@@ -192,10 +211,11 @@ bool RealADSB::initialize()
     int rc;
 
        printf("In main: creating thread %ld\n");
-       rc = pthread_create(&thread, NULL, PrintHello, NULL);
+       rc = pthread_create(&thread, NULL, &ADSBClientThread, this);
        if (rc){
           printf("ERROR; return code from pthread_create() is %d\n", rc);
-          exit(-1);
+          errorFlag=true;
+         // exit(-1);
        }
 
 
