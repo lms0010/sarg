@@ -10,7 +10,9 @@ class RealGPS: public GPSModule {
     virtual char*   getLastError();
     virtual bool    initialize();
     virtual bool    uninitialize();
-    virtual bool    getPos3(Vector3& pos);
+    virtual bool getCurrentLatitude(float& vehicleLat);
+    virtual bool getCurrentLongitude(float& vehicleLon);
+    virtual bool getCurrentAltitude(float& vehicleAltitude); //where do we get altitude from?
 };
 
 

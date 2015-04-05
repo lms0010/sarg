@@ -210,10 +210,10 @@ bool RealADSB::initialize()
     //return true if the thread was created successfully
     int rc;
 
-       printf("In main: creating thread %ld\n");
+       printf("In main: creating adsb message thread %ld\n");
        rc = pthread_create(&thread, NULL, &ADSBClientThread, this);
        if (rc){
-          printf("ERROR; return code from pthread_create() is %d\n", rc);
+          printf("ERROR in adsb message thread; return code from pthread_create() is %d\n", rc);
           errorFlag=true;
          // exit(-1);
        }

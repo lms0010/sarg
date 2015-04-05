@@ -47,7 +47,10 @@ public:
     struct positionMSG
     {
        char hex_ident[7];
-       float latitude, longitude, altitude, groundSpeed, track;
+       float latitude, longitude; //in degrees
+       float altitude;            //in feet
+       float groundSpeed;         //in knots
+       float track;               //in degrees
        bool inUse;
        positionMSG(): latitude(0.0f), longitude(0.0f), altitude(0.0f), groundSpeed(0.0f), track(0.0f), inUse(false) {
        }

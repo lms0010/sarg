@@ -12,7 +12,11 @@ class RealRadar: public RadarModule {
     virtual bool    initialize();
     virtual bool    uninitialize();
     virtual bool    getNext(ObstacleDistance& obstacleDistance);
+
+private:
+    bool            errorFlag;
     pthread_t       thread;
+    static void*    RadarClientThread(void* threadid);
 };
 
 #endif // REALRADAR_H

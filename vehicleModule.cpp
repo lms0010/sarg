@@ -86,40 +86,90 @@ bool vehicleModule::update() {
 
 
 
+
     //AIRCRAFT AVOIDANCE SECTION
     int earthRadiusMiles        = 3959;
     float degrees_to_radians    = M_PI/180.0;
     float radians_to_degrees    = 180.0/M_PI;
-
-    float x;
-    float y;
+    float x, y;
     int numObjects;
-    float track;
-    float groundSpeed;
+    float track, groundSpeed;
+    float mphConversion;
+    const float knots_to_mph       = 1.15078;
+    long int timeStamp =0;
+    float displacementLat, displacementLon, r;
+    float vehicleLat, vehicleLon, vehicleAltitude;
+    float projectedAircraftLat,projectedAircraftLon;
+
+    float minDist = 50; //CHANGE--min distance to avoid collision, in lat/long
+
 
     _adsb->getObjectCount(numObjects);
 
     for(int i; i<numObjects; i++){
         _adsb->getTrack(i, track);
-        _adsb->getTrack(i, groundSpeed);
+        _adsb->getGroundSpeed(i, groundSpeed);
+        mphConversion = groundSpeed*knots_to_mph;
 
         //direction unit vector for aircraft track
         x=cos(track);
         y=sin(track);
 
         //displacement vector (direction vector * magnitude)
-       // x = x * groundSpeed * timeStamp;
-        //y = y * groundSpeed * timeStamp ;
+          x = x * groundSpeed * timeStamp;//FIX TIMESTAMP*****
+          y = y * groundSpeed * timeStamp;
 
         //convert displacement vector to lat and long
-
-       // lat = (y/earthRadiusMiles)*(radians_to_degrees);
+          displacementLat = (y/earthRadiusMiles)*(radians_to_degrees);
          //radius of a circle around the earth at given lat
-        // r = earthRadiusMiles*cos(Lat*degrees_to_radians);
-        // lon = (x/r)*radians_to_degrees;
+          r = earthRadiusMiles*cos(displacementLat*degrees_to_radians);
+          displacementLon = (x/r)*radians_to_degrees;
 
-        //add position + displacement vector
+        //add gps position + displacement vector
+          _gps->getCurrentLatitude(vehicleLat);
+          _gps->getCurrentLongitude(vehicleLon);
+          _gps->getCurrentAltitude(vehicleAltitude); //can't project so area of uncertainty will be larger than for lat and lon
+          projectedAircraftLat=vehicleLat + displacementLat;
+          projectedAircraftLon=vehicleLon + displacementLon;
 
+          float altDifference, minAltDistance;
+
+          if(altDifference <= minAltDistance){
+              if(((abs(vehicleLat-projectedAircraftLat)) <= minDist) && ((abs(vehicleLon-projectedAircraftLon) <= minDist))){
+                  int xDist = projectedAircraftLat - vehicleLat;
+                  int yDist = projectedAircraftLon - vehicleLon;
+                  bool collideOnX;
+
+                  if(abs(xDist) >= abs(yDist))
+                      collideOnX = true;
+                  else
+                      collideOnX = false;
+
+
+                  if(collideOnX){
+                      if(xDist > 0) //go west, stop, load new path, look at 1st waypoint of new path and see if it NW,SW,OR W then take it
+                          xDist=0; //***CHANGE THIS
+                          //_waypoint->getNewPath();
+                          //_waypoint->getNextWaypoint();
+                          //if (waypointLon <= 0)
+                             // _drive->getGotoNewPath(waypoint);
+                          else// else go east,ne,se
+                           xDist=1; //***CHANGE THIS
+                          //_waypoint->getNewPath();
+                          //_waypoint->getNextWaypoint();
+                          //if (waypointLon >= 0)
+                             // _drive->getGotoNewPath(waypoint);
+                  }
+                  else {
+                      if(yDist > 0) //go south
+                          yDist=0; //***CHANGE THIS
+                          else//else go north
+                          yDist=1; //*****CHANGE THIS
+                  }
+
+              }
+
+          }
 
 
     }

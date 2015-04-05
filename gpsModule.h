@@ -7,8 +7,9 @@
 class GPSModule: public Module {
 public:
     virtual      ~GPSModule() {}
-    virtual bool getPos3(Vector3& pos) = 0;
-
+    virtual bool getCurrentLatitude(float& vehicleLat) = 0;
+    virtual bool getCurrentLongitude(float& vehicleLon) = 0;
+    virtual bool getCurrentAltitude(float& vehicleAltitude) = 0; //where do we get altitude from?
 };
 
 #endif // GPSMODULE_H
