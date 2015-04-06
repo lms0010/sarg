@@ -3,6 +3,7 @@
 
 #include "module.h"
 
+
 class FailSafeModule: public Module {
 public:
     virtual      ~FailSafeModule() {}
