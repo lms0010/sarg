@@ -25,8 +25,8 @@ RealRadar::~RealRadar()
 bool    RealRadar::update() { return true; }
 char*   RealRadar::getLastError() { return 0; }
 bool    RealRadar::uninitialize() { return true; }
-bool    RealRadar::getNext(ObstacleDistance& obstacle_distance) { return true; }
-
+bool    RealRadar::getNext(std::vector<double>*& vector) { vector = &obstacleDistances;
+                                                 return true;}
 int RS232_OpenComport(int, int, const char *);
 int RS232_PollComport(int, unsigned char *, int);
 int RS232_SendByte(int, unsigned char);
@@ -67,11 +67,11 @@ void *RealRadar::RadarClientThread(void *object)
 //        //		cout << fax_m[l];
 
 
-//         int comport = 0;
+//        int comport = 0;
 //        int charcount = 0;
 //        int dataset[1501];
 //        unsigned char buf[50];
-//         unsigned char buf2[50];
+//        unsigned char buf2[50];
 //        unsigned char intbuf[6];
 //        unsigned char msg1[5] = {'I', 'N', 'I', 'T', 13};
 //        unsigned char msg2[17] = {'S', 'W', 'E', 'E', 'P', ':', 'M', 'E', 'A', 'S', 'U', 'R', 'E', ' ', 'O', 'N', 13};

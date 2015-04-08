@@ -9,6 +9,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <cstring>
+#include <iostream>
+using namespace std;
 
 RealADSB::RealADSB(): ADSBModule(), errorFlag(false) {}
 
@@ -198,6 +200,27 @@ void *RealADSB::ADSBClientThread(void *object)
        count++;
        printf("%s\n",token);
        token=strtok(NULL, ",");
+
+       for (int i=0; i<adsb->visibleAircraft.size(); i++){
+           cout<<"HEX IDENT= ";
+           printf("%s", adsb->visibleAircraft[i].hex_ident);
+           cout<<"LATITUDE= ";
+           printf("%f", adsb->visibleAircraft[i].latitude);
+           cout<<"degrees \n ";
+           cout<<"LONGITUDE= ";
+           printf("%f", adsb->visibleAircraft[i].longitude);
+           cout<<"degrees \n ";
+           cout<<"ALTITUDE= ";
+           printf("%f", adsb->visibleAircraft[i].altitude);
+           cout<<"feet \n ";
+           cout<<"GROUND SPEED= ";
+           printf("%f", adsb->visibleAircraft[i].groundSpeed);
+           cout<<"knots \n ";
+           cout<<"TRACK= ";
+           printf("%f", adsb->visibleAircraft[i].track);
+           cout<<"degrees \n ";
+           }
+
         if(flag) break;
    }
 

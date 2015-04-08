@@ -7,7 +7,7 @@ struct Vector3 {
     Vector3(): x(0.0f), y(0.0f), z(0.0f) { }
 };
 
-class ObstacleDistance {
+/*class ObstacleDistance {
 private:
     Vector3 _pos;
     Vector3 _vel;
@@ -19,7 +19,7 @@ public:
     const Vector3&  getVel() const { return _vel; }
     void            setVel(const Vector3& vel) { _vel = vel; }
 
-};
+};*/
 
 class Waypoint {
 private:

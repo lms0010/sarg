@@ -147,12 +147,12 @@ bool vehicleModule::update() {
           const int minAltDistance = 2000;
 
           if(altDifference <= minAltDistance){
-              if(((abs(projectedAircraftLat-vehicleLat)) <= minDistLat) && ((abs(projectedAircraftLon-vehicleLon) <= minDistLon))){
+              if(((std::abs(projectedAircraftLat-vehicleLat)) <= minDistLat) && ((std::abs(projectedAircraftLon-vehicleLon) <= minDistLon))){
                   int latDist = projectedAircraftLat - vehicleLat;
                   int lonDist = projectedAircraftLon - vehicleLon;
                   bool collideOnLon;
 
-                  if(abs(lonDist) <= abs(latDist))
+                  if(std::abs(lonDist) <= std::abs(latDist))
                       collideOnLon = true;
                   else
                       collideOnLon = false;

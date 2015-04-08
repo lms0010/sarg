@@ -8,11 +8,12 @@
 
 class RadarModule: public Module {
 public:
-    virtual bool  getNext(ObstacleDistance& obstacleDistance) = 0;
-    virtual      ~RadarModule() {}
+    virtual bool  getNext(std::vector<double>*& vector) = 0;
 
+    virtual      ~RadarModule() {}
 protected:
-    std::vector<float> obstacleDistances;
+    std::vector<double> obstacleDistances;
+
 };
 
 #endif // RADARMODULE_H
