@@ -24,7 +24,8 @@ public:
     virtual bool getLatitude(int index, float& latitude);
     virtual bool getLongitude(int index, float& longitude);
     virtual bool getTrack(int index, float& track);
-    virtual bool getTimeStamp(int index, int& timeStamp) ;
+    virtual bool getCallSign(int index, char** callSign);
+    virtual bool getTimeStamp(int index, int& timeStamp);
 
 private:
     bool            errorFlag;

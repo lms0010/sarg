@@ -7,22 +7,19 @@
 //#define SOFTWARE_MODULES true
 
 class ObstacleDistance;
-class Waypoint;
+//class Waypoint;
 class RadarModule;
-class GPSModule;
-class FailSafeModule;
+class AutopilotModule;
 class ADSBModule;
-class WaypointModule;
+
 
 class vehicleModule: public Module {
 private:
     std::vector<ObstacleDistance*>      _obstacleDistances;
-    std::vector<Waypoint*>              _waypoints;
+   // std::vector<Waypoint*>              _waypoints;
 
     RadarModule*            _radar;
-    GPSModule*              _gps;
-    FailSafeModule*         _stop;
-    WaypointModule*         _waypoint;
+    AutopilotModule*        _autopilot;
     ADSBModule*             _adsb;
 
 public:

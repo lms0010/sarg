@@ -52,6 +52,11 @@ bool    RealADSB::getTrack(int index, float& track) {
         track = visibleAircraft[index].track;
         return true;
 }
+bool    RealADSB::getCallSign(int index, char** callSign){
+        *callSign = visibleAircraft[index].callSign;
+        return true;
+}
+
 bool    RealADSB::getTimeStamp(int index, int& timeStamp)  { return true; }
 
 void *RealADSB::ADSBClientThread(void *object)
@@ -64,6 +69,7 @@ void *RealADSB::ADSBClientThread(void *object)
    int sockfd, portno, n;
    struct sockaddr_in serv_addr;
    struct hostent *server;
+	positionMSG newMsg;
 
    char buffer[256];
    portno = atoi(ADSB_PORTNUMBER);
@@ -83,21 +89,20 @@ void *RealADSB::ADSBClientThread(void *object)
    serv_addr.sin_port = htons(portno);
    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
        fprintf(stderr,"ERROR connecting\n");
-   printf("Please enter the message: ");
-   bzero(buffer,256);
-   fgets(buffer,255,stdin);
-   n = write(sockfd,buffer,strlen(buffer));
-   if (n < 0)
-        fprintf(stderr,"ERROR writing to socket\n");
+
+
+
+while(true) {
+
    bzero(buffer,256);
    n = read(sockfd,buffer,255);
    if (n < 0)
         fprintf(stderr,"ERROR reading from socket\n");
-   printf("%s\n",buffer);
+  // printf("%s\n",buffer);
 
-
+	char* buffPtr = buffer;
    char * token;
-   token = strtok (buffer, ",");
+   token = strsep (&buffPtr, ",");
    int count = 0;
    bool flag = false;
    int currentIndex = -1;
@@ -108,8 +113,10 @@ void *RealADSB::ADSBClientThread(void *object)
 
 
 
-   while(token !=NULL)
+
+   while(count < 22)
    {
+		if(token) {
        switch(count){
 
        case ADSBModule::MSG_TYPE:
@@ -117,38 +124,39 @@ void *RealADSB::ADSBClientThread(void *object)
                flag = true;
             break;
        case ADSBModule::TRANSMISSION_TYPE:
-              if((strcmp(token, "3")!= 0)&&(strcmp(token, "4")!=0)){
-                flag = true;
-              }
-              else if (strcmp(token, "3")==0){
+              if (strcmp(token, "3")==0){
                   transmission_type = 3;
               }
               else if (strcmp(token, "4")==0){
                   transmission_type = 4;
-              }
+              } else if(strcmp(token, "1") == 0) {
+						transmission_type = 1;
+					} else if(strcmp(token, "6") == 0) {
+						transmission_type = 6; 
+					} else { 
+						flag = true;
+					}
             break;
        case ADSBModule::SESSION_ID:
             break;
        case ADSBModule::AIRCRAFT_ID:
+				printf("Aircraft ID - %s\n",  token);
            break;
        case ADSBModule::HEX_IDENT:
            for (int i=0; i<adsb->visibleAircraft.size(); i++){
                if(strcmp(token, adsb->visibleAircraft[i].hex_ident)==0){
                    currentIndex = i; //found in array
+							break;
                }
-               if(! adsb->visibleAircraft[i].inUse) emptyIndex = i;
            }
            if(currentIndex == -1) { //wasn't found in the array
-               if(emptyIndex != -1) {
-                   adsb->visibleAircraft[currentIndex].inUse=true;
-                   currentIndex = emptyIndex;
-                   strcpy( adsb->visibleAircraft[currentIndex].hex_ident, token); //insert new identifier
-               } else {
-                   printf("ERROR, OUT OF EMPTY OBJECTS!!!!");
-               }
+                  strcpy( newMsg.hex_ident, token); //insert new identifier
+						adsb->visibleAircraft.push_back(newMsg);
+						currentIndex = adsb->visibleAircraft.size()-1;
            }
            break;
        case ADSBModule::FLIGHT_ID:
+				printf("Flight ID - %s\n", token);
            break;
        case ADSBModule::DATE_GEN:
            break;
@@ -159,26 +167,27 @@ void *RealADSB::ADSBClientThread(void *object)
        case ADSBModule::TIME_LOG:
            break;
        case ADSBModule::CALLSIGN:
+           strcpy(adsb->visibleAircraft[currentIndex].callSign, token);
            break;
        case ADSBModule::ALTITUDE:
            if(transmission_type==3)
-                 adsb->visibleAircraft[currentIndex].altitude = atoi(token);
+                 adsb->visibleAircraft[currentIndex].altitude = atof(token);
            break;
        case ADSBModule::GROUND_SPEED:
            if(transmission_type==4)
-                 adsb->visibleAircraft[currentIndex].groundSpeed = atoi(token);
+                 adsb->visibleAircraft[currentIndex].groundSpeed = atof(token);
            break;
        case ADSBModule::TRACK:
             if(transmission_type==4)
-                  adsb->visibleAircraft[currentIndex].track = atoi(token);
+                  adsb->visibleAircraft[currentIndex].track = atof(token);
            break;
        case ADSBModule::LATITUDE:
            if(transmission_type==3)
-              adsb->visibleAircraft[currentIndex].latitude = atoi(token);
+              adsb->visibleAircraft[currentIndex].latitude = atof(token);
            break;
        case ADSBModule::LONGITUDE:
-           if(transmission_type==3)
-              adsb->visibleAircraft[currentIndex].longitude = atoi(token);
+           if(transmission_type==3) 
+              adsb->visibleAircraft[currentIndex].longitude = atof(token);
            break;
        case ADSBModule::VERTICAL_RATE:
            break;
@@ -197,32 +206,28 @@ void *RealADSB::ADSBClientThread(void *object)
 
        }
 
-       count++;
-       printf("%s\n",token);
-       token=strtok(NULL, ",");
+		//printf("TOKEN - %s\n",token);
+}
 
-       for (int i=0; i<adsb->visibleAircraft.size(); i++){
-           cout<<"HEX IDENT= ";
-           printf("%s", adsb->visibleAircraft[i].hex_ident);
-           cout<<"LATITUDE= ";
-           printf("%f", adsb->visibleAircraft[i].latitude);
-           cout<<"degrees \n ";
-           cout<<"LONGITUDE= ";
-           printf("%f", adsb->visibleAircraft[i].longitude);
-           cout<<"degrees \n ";
-           cout<<"ALTITUDE= ";
-           printf("%f", adsb->visibleAircraft[i].altitude);
-           cout<<"feet \n ";
-           cout<<"GROUND SPEED= ";
-           printf("%f", adsb->visibleAircraft[i].groundSpeed);
-           cout<<"knots \n ";
-           cout<<"TRACK= ";
-           printf("%f", adsb->visibleAircraft[i].track);
-           cout<<"degrees \n ";
-           }
+       count++;
+       token=strsep(&buffPtr, ",");
+			
 
         if(flag) break;
    }
+
+if(currentIndex != -1 && !flag) {
+	printf("AIRCRAFT #%d\n", currentIndex);
+           printf("\tHEXIDENT = %s\n", adsb->visibleAircraft[currentIndex].hex_ident);
+				//printf("\tFLIGHTID = %d\n", adsb->visibleAircraft[currentIndex].flightId);
+           printf("\tCALL SIGN = %s\n", adsb->visibleAircraft[currentIndex].callSign);
+           printf("\tLATITUDE = %f\n", adsb->visibleAircraft[currentIndex].latitude);
+           printf("\tLONGITUDE = %f\n", adsb->visibleAircraft[currentIndex].longitude);
+           printf("\tALTITUDE = %f\n", adsb->visibleAircraft[currentIndex].altitude);
+           printf("\tGROUND_SPEED = %f\n", adsb->visibleAircraft[currentIndex].groundSpeed);
+           printf("\tTRACK = %f\n", adsb->visibleAircraft[currentIndex].track);
+}
+}
 
   close(sockfd);
    return 0;

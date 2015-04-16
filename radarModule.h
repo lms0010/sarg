@@ -1,7 +1,6 @@
 #ifndef RADARMODULE_H
 #define RADARMODULE_H
 
-#include "types.h"
 #include "module.h"
 #include <vector>
 

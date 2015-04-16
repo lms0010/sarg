@@ -3,15 +3,11 @@
 
 #ifdef SOFTWARE_MODULES
 #   include "simulatedRadar.h"
-#   include "simulatedGPS.h"
-#   include "simulatedDrive.h"
-#   include "simulatedWaypoints.h"
+#   include "simulatedAutopilot.h"
 #   include "simulatedADSB.h"
 #else
 #   include "realRadar.h"
-#   include "realGPS.h"
-#   include "realDrive.h"
-#   include "realWaypoints.h"
+#   include "realAutopilot.h"
 #   include "realADSB.h"
 #endif
 
@@ -20,17 +16,13 @@ vehicleModule::vehicleModule() {
 
 #ifdef SOFTWARE_MODULES
     _radar          = new SimulatedRadar;
-    _gps            = new SimulatedGPS;
-    _stop           = new SimulatedDrive;
-    _waypoint       = new SimulatedWaypoints;
+    _autopilot      = new SimulatedAutopilot;
     _adsb           = new SimulatedADSB;
 
 #else
 
     _radar          = new RealRadar;
-    _gps            = new RealGPS;
-    _stop           = new RealDrive;
-    _waypoint       = new RealWaypoints;
+    _autopilot      = new RealAutopilot;
     _adsb           = new RealADSB;
 
 #endif
@@ -39,9 +31,7 @@ vehicleModule::vehicleModule() {
 
 vehicleModule::~vehicleModule() {
     delete _radar;
-    delete _gps;
-    delete _stop;
-    delete _waypoint;
+    delete _autopilot;
     delete _adsb;
 }
 
@@ -49,9 +39,7 @@ bool vehicleModule::initialize() {
     bool success = true;
 
     success &= _radar->initialize();
-    success &= _gps->initialize();
-    success &= _stop->initialize();
-    success &= _waypoint->initialize();
+    success &= _autopilot->initialize();
     success &= _adsb->initialize();
 
     return success;
@@ -61,9 +49,7 @@ bool vehicleModule::uninitialize() {
     bool success = true;
 
     success &= _radar->uninitialize();
-    success &= _gps->uninitialize();
-    success &= _stop->uninitialize();
-    success &= _waypoint->uninitialize();
+    success &= _autopilot->uninitialize();
     success &= _adsb->uninitialize();
 
     return success;
@@ -73,11 +59,9 @@ bool vehicleModule::update() {
     bool success = true;
 
     success &= _radar->update();
-    success &= _gps->update();
-    success &= _stop->update();
-    success &= _waypoint->update();
+    success &= _autopilot->update();
     success &= _adsb->update();
-
+#if 0
     //ENTER COLLISION AVOIDANCE ALGORITHM*****************
 
     //OBJECT AVOIDANCE BASED ON RADAR HERE
@@ -181,16 +165,8 @@ bool vehicleModule::update() {
               }
 
           }
-
-
     }
-
-
-
-
-
-
-
+#endif
 
     return success;
 }

@@ -534,6 +534,7 @@ void *RealRadar::RadarClientThread(void *object)
 
 bool RealRadar::initialize()
 {
+#if 0
     //return true if the thread was created successfully
     int rc;
 
@@ -545,7 +546,7 @@ bool RealRadar::initialize()
          // exit(-1);
        }
    return rc;
-
+#endif
 }
 
 

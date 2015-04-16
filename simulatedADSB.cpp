@@ -13,4 +13,5 @@ bool    SimulatedADSB::getGroundSpeed(int index, float& groundSpeed){ return tru
 bool    SimulatedADSB::getLatitude(int index, float& latitude) { return true; }
 bool    SimulatedADSB::getLongitude(int index, float& longitude) { return true; }
 bool    SimulatedADSB::getTrack(int index, float& track) { return true; }
+bool    SimulatedADSB::getCallSign(int index, char** callSign){return true;}
 bool    SimulatedADSB::getTimeStamp(int index, int& timeStamp) { return true; }

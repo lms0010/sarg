@@ -16,6 +16,7 @@ public:
     virtual bool getLatitude(int index, float& latitude) = 0;
     virtual bool getLongitude(int index, float& longitude) = 0;
     virtual bool getTrack(int index, float& track) = 0;
+    virtual bool getCallSign(int index, char** callSign) = 0;
     virtual bool getTimeStamp(int index, int& timeStamp)  = 0;
 
     enum Message
@@ -46,7 +47,9 @@ public:
 
     struct positionMSG
     {
-       char hex_ident[7];
+       char hex_ident[8];
+       char callSign[20];
+		int flightId;
        float latitude, longitude; //in degrees
        float altitude;            //in feet
        float groundSpeed;         //in knots
