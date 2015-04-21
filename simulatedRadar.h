@@ -10,7 +10,7 @@ class SimulatedRadar: public RadarModule {
     virtual char*   getLastError();
     virtual bool    initialize();
     virtual bool    uninitialize();
-    virtual bool    getNext(double& obstacleDistance);
+    virtual bool    getNext(std::vector<double>*& vector);
 };
 
 #endif // SIMULATEDRADAR_H

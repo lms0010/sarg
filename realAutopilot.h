@@ -16,8 +16,15 @@ class RealAutopilot: public AutopilotModule {
     virtual bool getVehicleLongitude(float& vehicleLon);
     virtual bool getVehicleAltitude(float& vehicleAltitude);
     virtual bool getVehicleTrack(float& vehicleTrack);
-};
+    virtual bool getSimulatedWaypoints(std::vector<std::vector<SimulatedWaypoints> >*& paths);
 
 
+
+private:
+    bool            errorFlag;
+    pthread_t       thread;
+    static void*    ADSBClientThread(void* threadid);
+
+    };
 
 #endif // REALAUTOPILOT_H

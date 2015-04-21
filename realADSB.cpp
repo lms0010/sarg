@@ -57,7 +57,7 @@ bool    RealADSB::getCallSign(int index, char** callSign){
         return true;
 }
 
-bool    RealADSB::getTimeStamp(int index, int& timeStamp)  { return true; }
+bool    RealADSB::getTimeStamp(int index, float& timeStamp)  { return true; }
 
 void *RealADSB::ADSBClientThread(void *object)
 {

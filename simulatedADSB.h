@@ -19,7 +19,7 @@ public:
     virtual bool getLongitude(int index, float& longitude);
     virtual bool getTrack(int index, float& track);
     virtual bool getCallSign(int index, char** callSign);
-    virtual bool getTimeStamp(int index, int& timeStamp) ;
+    virtual bool getTimeStamp(int index, float& timeStamp) ;
 
 
 };

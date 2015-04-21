@@ -16,6 +16,7 @@ class SimulatedAutopilot: public AutopilotModule {
     virtual bool getVehicleLongitude(float& vehicleLon);
     virtual bool getVehicleAltitude(float& vehicleAltitude);
     virtual bool getVehicleTrack(float& vehicleTrack);
+    virtual bool getSimulatedWaypoints(std::vector<std::vector<SimulatedWaypoints> >*& paths);
 };
 
 

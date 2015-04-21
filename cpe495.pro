@@ -3,6 +3,8 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
+DEFINES += SOFTWARE_MODULES #simulated, delete to enable real
+
 SOURCES += main.cpp \
     simulatedRadar.cpp \
     realRadar.cpp \

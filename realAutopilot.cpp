@@ -1,4 +1,5 @@
 #include "realAutopilot.h"
+#include <vector>
 
 RealAutopilot::~RealAutopilot() {}
 
@@ -32,4 +33,6 @@ bool  RealAutopilot::getVehicleAltitude(float& vehicleAltitude){
 bool  RealAutopilot::getVehicleTrack(float& vehicleTrack){
 
 }
-
+bool RealAutopilot::getSimulatedWaypoints(std::vector<std::vector<SimulatedWaypoints> >*& paths){
+    return true;
+}

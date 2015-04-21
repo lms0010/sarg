@@ -17,7 +17,7 @@ public:
     virtual bool getLongitude(int index, float& longitude) = 0;
     virtual bool getTrack(int index, float& track) = 0;
     virtual bool getCallSign(int index, char** callSign) = 0;
-    virtual bool getTimeStamp(int index, int& timeStamp)  = 0;
+    virtual bool getTimeStamp(int index, float& timeStamp)  = 0;
 
     enum Message
     {
